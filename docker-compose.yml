@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  postgres-timescaledb:
+  tsdb:
     image: timescale/timescaledb:${TIMESCALEDB_VERSION}
     ports:
       - ${POSTGRES_PORT}:5432
@@ -15,6 +15,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
-
+  
 volumes:
   pgdata: {}
