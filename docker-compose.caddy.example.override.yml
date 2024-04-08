@@ -1,0 +1,7 @@
+services:
+  tsdb:
+    networks:
+      - caddy
+    labels:
+      caddy: ${TSDB_SERVER}
+      caddy.reverse_proxy: "{{upstreams 5432}}"
