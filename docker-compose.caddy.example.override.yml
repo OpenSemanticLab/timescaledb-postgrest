@@ -3,5 +3,10 @@ services:
     networks:
       - caddy
     labels:
-      caddy: ${TSDB_SERVER}
+      caddy: ${TIMESCALEDB_SERVER}
       caddy.reverse_proxy: "{{upstreams 5432}}"
+
+networks:
+  # Add caddy as an external network.
+  caddy:
+    external: true
