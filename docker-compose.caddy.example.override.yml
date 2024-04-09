@@ -1,10 +1,26 @@
 services:
-  tsdb:
+  swaggerui:
     networks:
       - caddy
+      - default
     labels:
-      caddy: ${TIMESCALEDB_SERVER}
-      caddy.reverse_proxy: "{{upstreams 5432}}"
+      caddy: ${SWAGGERUI_SERVER}
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+
+  pgrst:
+    networks:
+      - caddy
+      - default
+    labels:
+      caddy: ${PGRST_OPENAPI_SERVER_PROXY_URI}
+      caddy.reverse_proxy: "{{upstreams 3000}}"
+
+  tsdb:
+    networks:
+      - default
+    # labels:
+    #   caddy: ${TIMESCALEDB_SERVER}
+    #   caddy.reverse_proxy: "{{upstreams 5432}}"
 
 networks:
   # Add caddy as an external network.

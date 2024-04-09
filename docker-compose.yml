@@ -1,20 +1,54 @@
 version: '3.8'
 
 services:
+  swagger:
+    container_name: swagger-container
+    image: swaggerapi/swagger-ui:${SWAGGERUI_VERSION}
+    # ports:
+    #   - ${SWAGGER_PORT}:8080
+    # expose:
+    #   - ${SWAGGER_PORT}
+    environment:
+      API_URL: ${PGRST_OPENAPI_SERVER_PROXY_URI}
+      # VALIDATOR_URL: "localhost" # optional
+    restart: unless-stopped
+    depends_on:
+      - pgrst
+      - tsdb
+
+  pgrst:
+    container_name: pgrstcontainer
+    image: postgrest/postgrest:${PGRST_VERSION}
+    # ports:
+    #   - ${PGRST_PORT}:3000
+    environment:
+      PGRST_DB_URI: postgres://${PGRST_USER}:${PGRST_PASSWORD}@tsdb:${POSTGRES_PORT}/${POSTGRES_DB}
+      PGRST_OPENAPI_SERVER_PROXY_URI: ${PGRST_OPENAPI_SERVER_PROXY_URI}
+      # PGRST_DB_SCHEMAS: ${PGRST_DB_SCHEMAS}
+      # PGRST_DB_ANON_ROLE: ${PGRST_DB_ANON_ROLE}
+      # PGRST_JWT_SECRET: ${PGRST_JWT_SECRET}
+      # PGRST_DB_PRE_REQUEST: ${PGRST_DB_PRE_REQUEST}
+      # PGRST_ROLE_CLAIM_KEY: ${PGRST_ROLE_CLAIM_KEY}
+      # PGRST_OPENAPI_SECURITY_ACTIVE: ${PGRST_OPENAPI_SECURITY_ACTIVE}
+    restart: unless-stopped
+    depends_on:
+      - tsdb
+
   tsdb:
     image: timescale/timescaledb:${TIMESCALEDB_VERSION}
-    ports:
-      - ${POSTGRES_PORT}:5432
+    # ports:
+    #   - ${POSTGRES_PORT}:5432
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
       TIMESCALEDB_TELEMETRY: ${TIMESCALEDB_TELEMETRY}
       TS_TUNE_MEMORY: ${TS_TUNE_MEMORY}
       TS_TUNE_NUM_CPUS: ${TS_TUNE_NUM_CPUS}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./docker-entrypoint:/docker-entrypoint-initdb.d
     restart: unless-stopped
-  
+
 volumes:
   pgdata: {}
