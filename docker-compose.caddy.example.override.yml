@@ -5,7 +5,7 @@ services:
       - default
     labels:
       caddy: ${SWAGGERUI_SERVER}
-      caddy.reverse_proxy: "{{upstreams 8421}}"
+      caddy.reverse_proxy: "{{upstreams 8080}}"
 
   pgrst:
     networks:
@@ -18,6 +18,8 @@ services:
   tsdb:
     networks:
       - default
+    # For now not reqired, maybe for TLS Caddy L4 TCP/UDP
+    # see: https://github.com/mholt/caddy-l4
     # labels:
     #   caddy: ${TIMESCALEDB_SERVER}
     #   caddy.reverse_proxy: "{{upstreams 5432}}"

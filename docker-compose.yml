@@ -2,8 +2,8 @@ services:
   swaggerui:
     image: swaggerapi/swagger-ui:${SWAGGERUI_VERSION}
     container_name: swaggercontainer
-    ports:
-      - ${SWAGGERUI_PORT}:8080
+    # ports:
+    #   - ${SWAGGERUI_PORT}:8080
     # expose:
     #   - ${SWAGGERUI_PORT}
     environment:
@@ -20,15 +20,15 @@ services:
     # ports:
     #   - ${PGRST_PORT}:3000
     environment:
-      PGRST_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@tsdb:${POSTGRES_PORT}/${POSTGRES_DB}
-      # PGRST_DB_URI: postgres://${PGRST_USER}:${PGRST_PASSWORD}@tsdb:${POSTGRES_PORT}/${POSTGRES_DB}
+      PGRST_DB_URI: postgres://authenticator:${PGRST_PASSWORD}@tsdb:${POSTGRES_PORT}/${POSTGRES_DB}
       PGRST_OPENAPI_SERVER_PROXY_URI: ${PGRST_OPENAPI_SERVER_PROXY_URI}
-      # PGRST_DB_SCHEMAS: ${PGRST_DB_SCHEMAS}
-      # PGRST_DB_ANON_ROLE: ${PGRST_DB_ANON_ROLE}
-      # PGRST_JWT_SECRET: ${PGRST_JWT_SECRET}
-      # PGRST_DB_PRE_REQUEST: ${PGRST_DB_PRE_REQUEST}
+      PGRST_DB_SCHEMAS: api
+      PGRST_DB_ANON_ROLE: api_anon
+      PGRST_OPENAPI_SECURITY_ACTIVE: true
+      PGRST_JWT_SECRET: ${PGRST_JWT_SECRET}
+      # !Todo: Keycloak/Auth0 authentication 
       # PGRST_ROLE_CLAIM_KEY: ${PGRST_ROLE_CLAIM_KEY}
-      # PGRST_OPENAPI_SECURITY_ACTIVE: ${PGRST_OPENAPI_SECURITY_ACTIVE}
+      # PGRST_DB_PRE_REQUEST: ${PGRST_DB_PRE_REQUEST}
     restart: unless-stopped
     depends_on:
       - tsdb
