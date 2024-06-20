@@ -213,13 +213,7 @@ BEGIN
     create_msg := 'Channel, Tool and ';
   END IF;
   
-  -- ! Different mechanism in schema 3, cause data is stored in table with channel name UUID of generated table, and table has no column for channel
-  -- INSERT INTO api.channeldata(osw_channel, ts, data) -- ! SCHEMA 4
-  -- SELECT
-  --   channel,
-  --   '2024-01-01T00:00:00.000000+00'::TIMESTAMPTZ + (days_offset * interval '1 day') + (generate_series(1, datapoints) ) * interval '1 microseconds',
-  --   ('{"value":'||(random()*100)::real||'}')::json;
-  -- add wait time to let the channel endpoint be created
+  -- ! Different mechanism in schema 3, cause data is stored in table with channel name UUID of 
   insert_format_query:= format('
         INSERT INTO api.%I(ts, data)
         SELECT
