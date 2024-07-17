@@ -1,3 +1,4 @@
 .env
 _ign/*
 docker-compose.override.yml
+docker-entrypoint/*schema*.sql
