@@ -105,7 +105,7 @@ BEGIN
     create_msg := 'Tool and ';
   END IF;
   
-  -- ! Different mechanism in schema 3, cause data is stored in table with channel name UUID of 
+  -- ! Different mechanism in schema 2, cause data is stored in table with tool name UUID of 
   insert_format_query:= format('
         INSERT INTO api.%I(osw_channel, ts, data)
         SELECT
@@ -123,6 +123,8 @@ BEGIN
 
   RETURN create_msg || insert_msg;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET statement_timeout TO '300s';
+
 
 -- SELECT api.gen_data('OSW24f9c902423f4733a96cc26sctest0t1', 'OSW24f9c902423f4733a96cc26sctest0c1', 1000, 1);

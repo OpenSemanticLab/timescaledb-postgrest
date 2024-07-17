@@ -230,6 +230,8 @@ BEGIN
 
   RETURN create_msg || insert_msg;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET statement_timeout TO '300s';
+
 
 -- SELECT api.gen_data('OSW24f9c902423f4733a96cc26sctest0c1', 1000, 1, 'OSW24f9c902423f4733a96cc26sctest0t1');

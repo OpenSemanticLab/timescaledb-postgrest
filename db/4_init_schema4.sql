@@ -112,7 +112,8 @@ BEGIN
 
   RETURN create_msg || insert_msg;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET statement_timeout TO '300s';
 
 -- -- Overloaded function without 'days_offset' variable (NOT REQUIRED FOR API, CAUSE JSON REFERENCES INTEGRITY)
 -- CREATE OR REPLACE FUNCTION api.gen_data(channel CHAR(35), datapoints INT, tool CHAR(35) DEFAULT NULL)

@@ -228,13 +228,13 @@ LANGUAGE plpgsql;
 -- Create synthetic data for query testing
 -- Function to generate synthetic data into channeldata, input is channel id and number of data points
 DROP FUNCTION IF EXISTS api.gen_data;
-CREATE OR REPLACE FUNCTION api.gen_data(channel CHAR(35), datapoints INT, days_offset INT DEFAULT 0, tool CHAR(35) DEFAULT NULL)
+CREATE OR REPLACE FUNCTION api.gen_data(channel VARCHAR(35), datapoints INT, days_offset INT DEFAULT 0, tool VARCHAR(35) DEFAULT NULL)
 -- Return message if channel and tool do not exist
 RETURNS TEXT AS $$
 DECLARE
   create_msg TEXT;
   insert_msg TEXT;
-  _tool CHAR(35);
+  _tool VARCHAR(35);
   insert_format_query TEXT;
   _id INTEGER;
 BEGIN
@@ -243,8 +243,10 @@ BEGIN
   -- Check if tool is provided, if not use tool from channel
   IF tool IS NOT NULL THEN
     _tool := tool;
+    RAISE NOTICE 'Tool provided: %', _tool;
   ELSE
     _tool := (SELECT osw_tool FROM api.channels WHERE osw_channel = channel);
+    RAISE NOTICE 'Tool from channel: %', _tool;
   END IF;
 
   -- Raise Error if tool is not provided and not found in channel
@@ -263,7 +265,7 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM api.channels WHERE osw_channel = channel) THEN
       INSERT INTO api.channels (osw_channel, osw_tool) VALUES (channel, _tool);
       -- message that channel and tool were created
-      RAISE NOTICE 'Channel for exisiting Tool created successfully!'; 
+      RAISE NOTICE 'Channel for existing Tool created successfully!'; 
       create_msg := 'Channel for existing Tool and ';
     END IF;
   END IF;
@@ -277,6 +279,12 @@ BEGIN
   END IF;
   
   SELECT id INTO _id FROM api.channels WHERE osw_channel = channel;
+  
+  -- Ensure tool is not null before using it in format
+  IF _tool IS NULL THEN
+    RAISE EXCEPTION 'Tool must not be null!';
+  END IF;
+  
   -- Insert data into api."%osw_tool%" table
   insert_format_query:= format('
         INSERT INTO api.%I(id, ts, data)
@@ -284,7 +292,7 @@ BEGIN
             %s,
             ''2024-01-01T00:00:00.000000+00''::TIMESTAMPTZ + (%s * interval ''1 day'') + (generate_series(1, %s) ) * interval ''1 microseconds'',
             (''{"value":''||(random()*100)::real||''}'')::json
-        ', tool, _id, days_offset, datapoints);
+        ', _tool, _id, days_offset, datapoints);
   -- show query
   RAISE NOTICE 'Executed Format Query: %', insert_format_query;
   EXECUTE insert_format_query;
@@ -295,7 +303,9 @@ BEGIN
 
   RETURN create_msg || insert_msg;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET statement_timeout TO '300s';
+
 
 
 -- -- Test data generation (expected)
