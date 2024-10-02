@@ -15,8 +15,9 @@ services:
       - tsdb
 
   pgrst:
+    # scale
     image: postgrest/postgrest:${PGRST_VERSION}
-    container_name: pgrstcontainer
+    # container_name: pgrstcontainer
     # ports:
     #   - ${PGRST_PORT}:3000
     environment:
@@ -32,21 +33,28 @@ services:
     restart: unless-stopped
     depends_on:
       - tsdb
+    deploy:
+      replicas: 1
 
   tsdb:
-    image: timescale/timescaledb:${TIMESCALEDB_VERSION}
+    # image: timescale/timescaledb:${TIMESCALEDB_VERSION} # old
+    # two different licence models are available: https://www.timescale.com/legal/licenses 
+    image: timescale/timescaledb-ha:${TIMESCALEDB_VERSION} # ha (high availability)
     container_name: tsdbcontainer
     # ports:
     #   - ${POSTGRES_PORT}:5432
     environment:
       TIMESCALEDB_TELEMETRY: ${TIMESCALEDB_TELEMETRY}
-      TS_TUNE_MEMORY: ${TS_TUNE_MEMORY}
-      TS_TUNE_NUM_CPUS: ${TS_TUNE_NUM_CPUS}
+      # TS_TUNE_MEMORY: ${TS_TUNE_MEMORY}
+      # TS_TUNE_NUM_CPUS: ${TS_TUNE_NUM_CPUS}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    command: -c 'max_connections=2000'
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      # - pgdata:/var/lib/postgresql/data # old
+      # https://docs.timescale.com/self-hosted/latest/install/installation-docker/#more-docker-options
+      - pgdata:/home/postgres/pgdata/data # ha
       - ./docker-entrypoint:/docker-entrypoint-initdb.d
     restart: unless-stopped
 
