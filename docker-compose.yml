@@ -9,7 +9,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
-      - pgadmin:/var/lib/pgadmin
+      - pgadmindata:/var/lib/pgadmin
     restart: ${RESTART_POLICY}
     depends_on:
       - tsdb
