@@ -1,4 +1,13 @@
 services:
+
+  pgadmin:
+    networks:
+      - caddy
+      - default
+    labels:
+      caddy: ${PGADMIN_SERVER_URI}
+      caddy.reverse_proxy: "{{upstreams 80}}"
+
   swaggerui:
     networks:
       - caddy

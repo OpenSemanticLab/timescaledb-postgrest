@@ -1,4 +1,18 @@
 services:
+
+  pgadmin:
+    image: dpage/pgadmin4:${PGADMIN_VERSION}
+    container_name: pgadmincontainer
+    # ports:
+    #   - ${PGADMIN_PORT}:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    # TODO: Add volume for persistent storage and predefined configuration
+    restart: ${RESTART_POLICY}
+    depends_on:
+      - tsdb
+
   swaggerui:
     image: swaggerapi/swagger-ui:${SWAGGERUI_VERSION}
     container_name: swaggercontainer
@@ -9,7 +23,7 @@ services:
     environment:
       API_URL: ${PGRST_OPENAPI_SERVER_PROXY_URI}
       # VALIDATOR_URL: "localhost" # optional
-    restart: unless-stopped
+    restart: ${RESTART_POLICY}
     depends_on:
       - pgrst
       - tsdb
@@ -21,7 +35,7 @@ services:
     # ports:
     #   - ${PGRST_PORT}:3000
     environment:
-      PGRST_DB_URI: postgres://authenticator:${PGRST_PASSWORD}@tsdb:${POSTGRES_PORT}/${POSTGRES_DB}
+      PGRST_DB_URI: postgres://authenticator:${PGRST_JWT_SECRET}@tsdb:${POSTGRES_PORT}/${POSTGRES_DB}
       PGRST_OPENAPI_SERVER_PROXY_URI: ${PGRST_OPENAPI_SERVER_PROXY_URI}
       PGRST_DB_SCHEMAS: api
       PGRST_DB_ANON_ROLE: api_anon
@@ -30,7 +44,7 @@ services:
       # !Todo: Keycloak/Auth0 authentication 
       # PGRST_ROLE_CLAIM_KEY: ${PGRST_ROLE_CLAIM_KEY}
       # PGRST_DB_PRE_REQUEST: ${PGRST_DB_PRE_REQUEST}
-    restart: unless-stopped
+    restart: ${RESTART_POLICY}
     depends_on:
       - tsdb
     deploy:
@@ -45,18 +59,18 @@ services:
     #   - ${POSTGRES_PORT}:5432
     environment:
       TIMESCALEDB_TELEMETRY: ${TIMESCALEDB_TELEMETRY}
-      # TS_TUNE_MEMORY: ${TS_TUNE_MEMORY}
-      # TS_TUNE_NUM_CPUS: ${TS_TUNE_NUM_CPUS}
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      # TS_TUNE_MEMORY: ${TS_TUNE_MEMORY}
+      # TS_TUNE_NUM_CPUS: ${TS_TUNE_NUM_CPUS}
     command: -c 'max_connections=2000'
     volumes:
       # - pgdata:/var/lib/postgresql/data # old
       # https://docs.timescale.com/self-hosted/latest/install/installation-docker/#more-docker-options
       - pgdata:/home/postgres/pgdata/data # ha
       - ./docker-entrypoint:/docker-entrypoint-initdb.d
-    restart: unless-stopped
+    restart: ${RESTART_POLICY}
 
 volumes:
   pgdata: {}

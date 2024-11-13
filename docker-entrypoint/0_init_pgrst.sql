@@ -16,7 +16,7 @@ CREATE ROLE api_user nologin;
 CREATE ROLE api_anon nologin;
 
 -- !TODO: replace line using Ansible regex to set password from inventory
-CREATE ROLE authenticator WITH NOINHERIT LOGIN PASSWORD 'pgrstauth';
+CREATE ROLE authenticator WITH NOINHERIT LOGIN PASSWORD 'MY_SECRET_PASSWORD';
 
 -- Set permissions
 GRANT api_anon TO authenticator;
