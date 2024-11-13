@@ -8,7 +8,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    # TODO: Add volume for persistent storage and predefined configuration
+    volumes:
+      - pgadmin:/var/lib/pgadmin
     restart: ${RESTART_POLICY}
     depends_on:
       - tsdb
@@ -74,3 +75,4 @@ services:
 
 volumes:
   pgdata: {}
+  pgadmindata: {}
