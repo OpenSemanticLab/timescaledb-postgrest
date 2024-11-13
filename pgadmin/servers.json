@@ -1,0 +1,15 @@
+{
+  "Servers": {
+    "1": {
+      "Group": "Servers",
+      "Name": "Docker",
+      "Host": "tsdb",
+      "Port": 5432,
+      "MaintenanceDB": "postgres",
+      "Username": "postgres",
+      "Password": "MY_SECRET_PASSWORD",
+      "SSLMode": "prefer",
+      "Favorite": true
+    }
+  }
+}
