@@ -11,6 +11,7 @@ services:
     volumes:
       - pgadmindata:/var/lib/pgadmin
       - ./pgadmin/servers.json:/pgadmin4/servers.json
+      # https://forums.docker.com/t/automatically-connect-pgadmin-to-a-postgresql-volume-on-which-there-is-a-database-and-automatically-load-a-schema-present-on-a-sql-file-with-docker-compose/124647
     restart: ${RESTART_POLICY}
     depends_on:
       - tsdb

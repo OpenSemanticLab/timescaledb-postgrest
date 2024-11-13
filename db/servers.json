@@ -2,7 +2,7 @@
   "Servers": {
     "1": {
       "Group": "Servers",
-      "Name": "Docker",
+      "Name": "tsdb-pgrst-1",
       "Host": "tsdb",
       "Port": 5432,
       "MaintenanceDB": "postgres",
