@@ -3,3 +3,4 @@ _ign/*
 docker-compose.override.yml
 docker-entrypoint/*
 pgadmin/*
+pgdata/*
