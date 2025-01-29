@@ -69,13 +69,11 @@ services:
       # TS_TUNE_NUM_CPUS: ${TS_TUNE_NUM_CPUS}
     command: -c 'max_connections=2000'
     volumes:
-      # - pgdata:/var/lib/postgresql/data # old
       # https://docs.timescale.com/self-hosted/latest/install/installation-docker/#more-docker-options
       - pgdata:/home/postgres/pgdata/data # ha
-      - ./pgdata:/home/postgres/pgdata
       - ./docker-entrypoint:/docker-entrypoint-initdb.d
     restart: ${RESTART_POLICY}
 
 volumes:
-  # pgdata: {}
+  pgdata: {}
   pgadmindata: {}
