@@ -62,3 +62,25 @@ Data Objects on 'api.<TOOL_OSW_UUID>' have format:
     "data": {},
 }
 ```
+
+
+## Prerequisites
+
+- Docker, Docker Compose
+- Local data directory or linked directory (optionally use docker volume)
+
+
+### Using Mounted Directory
+
+Create local data directory with right permissions, for instance 1st pgdata directory:
+
+```bash
+sudo mkdir -p /mnt/tsdb-pgrst-1_pgdata
+sudo chown -R 1000:1000 /mnt/tsdb-pgrst-1_pgdata
+```
+
+Symlink to local directory to be used by docker-compose:
+
+```bash
+sudo ln -s /mnt/tsdb-pgrst-1_pgdata pgdata
+```
