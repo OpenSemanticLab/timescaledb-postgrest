@@ -24,7 +24,7 @@ DROP FUNCTION IF EXISTS api.create_tool_endpoint(osw_tool CHAR(35));
 CREATE OR REPLACE FUNCTION api.create_tool_endpoint(osw_tool CHAR(35)) RETURNS void AS
 $$
 BEGIN
-    EXECUTE format('CREATE TABLE IF NOT EXISTS api.%I (channel CHAR(35), ts TIMESTAMPTZ NOT NULL, data JSONB)', osw_tool);
+    EXECUTE format('CREATE TABLE IF NOT EXISTS api.%I (ch CHAR(35), ts TIMESTAMPTZ NOT NULL, data JSONB)', osw_tool);
     EXECUTE format('SELECT api.create_hypertable(''api.%I'', ''ts'')', osw_tool);
     EXECUTE format('GRANT SELECT on api.%I to api_anon', osw_tool);
     EXECUTE format('GRANT ALL on api.%I to api_user', osw_tool);
@@ -107,7 +107,7 @@ BEGIN
   
   -- ! Different mechanism in schema 2, cause data is stored in table with tool name UUID of 
   insert_format_query:= format('
-        INSERT INTO api.%I(channel, ts, data)
+        INSERT INTO api.%I(ch, ts, data)
         SELECT
             %L,
             ''2024-01-01T00:00:00.000000+00''::TIMESTAMPTZ + (%s * interval ''1 day'') + (generate_series(1, %s) ) * interval ''1 microseconds'',

@@ -8,7 +8,7 @@ Table of Contents
 
 ## Database Schema
 
-- Each OSW Tool own endpoint, osw_channel is direct attribute of each osw_tool table/endpoint
+- Each OSW Tool own endpoint, `ch` (channel of OSW) is direct attribute of each osw_tool table/endpoint
 - in this version it is not possible to query all data from all tools (either dynamic/sub query function or combined channel references reqired)
 
 ```mermaid
@@ -30,7 +30,7 @@ erDiagram
     CHAR(35)[] osw_tool
   }
   nt[n_osw_tools] {
-    CHAR(35) osw_channel
+    CHAR(35) ch
     TIMESTAMP ts
     JSONB data
   }
@@ -57,7 +57,7 @@ Data Objects on 'api.<TOOL_OSW_UUID>' have format:
 
 ```json
 {
-    "osw_channel": "<CHANNEL_OSW_UUID>",
+    "ch": "<CHANNEL_OSW_UUID>",
     "ts": "<TIMESTAMP>",
     "data": {},
 }
