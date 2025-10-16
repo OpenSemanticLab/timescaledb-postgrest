@@ -1,5 +1,4 @@
 services:
-
   pgadmin:
     networks:
       - caddy
@@ -8,13 +7,21 @@ services:
       caddy: ${PGADMIN_SERVER_URI}
       caddy.reverse_proxy: "{{upstreams 80}}"
 
+  adminer:
+    networks:
+      - caddy
+      - default
+    labels:
+      caddy: ${ADMINER_SERVER_URI}
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+
   swaggerui:
     networks:
       - caddy
       - default
     labels:
       caddy: ${PGRST_OPENAPI_SERVER_PROXY_URI}
-      caddy.1_handle_path: /docs/*
+      caddy.1_handle_path: /docs*
       caddy.1_handle_path.reverse_proxy: "{{upstreams 8080}}"
       # caddy.2_handle_path: /redoc/*
       # caddy.2_handle_path.reverse_proxy: "{{upstreams 8080}}"
