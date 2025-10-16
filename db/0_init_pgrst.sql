@@ -9,7 +9,7 @@ SET search_path TO api;
 
 -- Revoking default privileges to prevent public access to functions
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
-CREATE EXTENSION timescaledb;
+CREATE EXTENSION IF NOT EXISTS timescaledb;
 
 -- Create user roles
 CREATE ROLE api_user nologin;

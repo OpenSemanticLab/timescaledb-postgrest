@@ -1,10 +1,13 @@
-# TimescaleDB PostgREST
+# TimescaleDB PostgREST <!-- omit in toc -->
 
-Table of Contents
+## Table of Contents <!-- omit in toc -->
 
-- [TimescaleDB PostgREST](#timescaledb-postgrest)
-  - [Database Schema](#database-schema)
-  - [Dataset Example](#dataset-example)
+- [Database Schema](#database-schema)
+- [Dataset Example](#dataset-example)
+- [Prerequisites](#prerequisites)
+  - [Option 1: Using Docker Volume](#option-1-using-docker-volume)
+  - [Option 2: Using Local Directory](#option-2-using-local-directory)
+  - [Option 3: Using Mounted Directory with Symlink](#option-3-using-mounted-directory-with-symlink)
 
 ## Database Schema
 
@@ -63,20 +66,29 @@ Data Objects on 'api.<TOOL_OSW_UUID>' have format:
 }
 ```
 
-
 ## Prerequisites
 
 - Docker, Docker Compose
 - Local data directory or linked directory (optionally use docker volume)
 
+### Option 1: Using Docker Volume
 
-### Using Mounted Directory
+Edit [`docker-compose.yml`](./docker-compose.yml) to use docker volume instead of local directory, see comments in file.
+
+### Option 2: Using Local Directory
 
 Create local data directory with right permissions, for instance 1st pgdata directory:
 
 ```bash
-sudo mkdir -p /mnt/tsdb-pgrst-1_pgdata
-sudo chown -R 1000:1000 /mnt/tsdb-pgrst-1_pgdata
+mkdir -p ./pgdata && sudo chown -R 1000:1000 ./pgdata
+```
+
+### Option 3: Using Mounted Directory with Symlink
+
+Create local data directory with right permissions, for instance 1st pgdata directory:
+
+```bash
+sudo mkdir -p /mnt/tsdb-pgrst-1_pgdata && sudo chown -R 1000:1000 /mnt/tsdb-pgrst-1_pgdata
 ```
 
 Symlink to local directory to be used by docker-compose:
