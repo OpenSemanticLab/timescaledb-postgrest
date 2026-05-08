@@ -72,6 +72,55 @@ GRANT EXECUTE ON FUNCTION api.create_tools(char[]) TO api_anon;
 GRANT EXECUTE ON FUNCTION api.create_tools(char[]) TO api_user;
 ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON FUNCTIONS TO PUBLIC;
 
+-- Endpoint to delete a tool
+ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
+DROP FUNCTION IF EXISTS api.delete_tool_endpoint(osw_tool CHAR(35));
+CREATE OR REPLACE FUNCTION api.delete_tool_endpoint(osw_tool CHAR(35)) RETURNS void AS
+$$
+BEGIN
+    EXECUTE format('DROP TABLE IF EXISTS api.%I', osw_tool);
+END;
+$$
+LANGUAGE plpgsql;
+GRANT EXECUTE ON FUNCTION api.delete_tool_endpoint TO api_user;
+ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON FUNCTIONS TO PUBLIC;
+
+
+-- Function to delete a tool, input is osw_tool, returns status message
+ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
+DROP FUNCTION IF EXISTS api.delete_tool(osw_tool CHAR(35));
+CREATE OR REPLACE FUNCTION api.delete_tool(osw_tool CHAR(35)) RETURNS TEXT AS
+$$
+BEGIN
+    PERFORM api.delete_tool_endpoint(osw_tool);
+    DELETE FROM api.tools WHERE api.tools.osw_tool = delete_tool.osw_tool;
+    RETURN 'OSW tool deleted successfully: ' || osw_tool;
+END;
+$$
+LANGUAGE plpgsql;
+GRANT EXECUTE ON FUNCTION api.delete_tool(char) TO api_anon;
+GRANT EXECUTE ON FUNCTION api.delete_tool(char) TO api_user;
+ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON FUNCTIONS TO PUBLIC;
+
+-- Function to delete multiple tools, input is array of osw_tools, returns status message
+ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
+DROP FUNCTION IF EXISTS api.delete_tools(osw_tools CHAR(35)[]);
+CREATE OR REPLACE FUNCTION api.delete_tools(osw_tools CHAR(35)[]) RETURNS TEXT AS
+$$
+DECLARE
+        osw_tool CHAR(35);
+BEGIN
+        FOREACH osw_tool IN ARRAY osw_tools LOOP
+                PERFORM api.delete_tool(osw_tool);
+        END LOOP;
+        RETURN 'OSW tools deleted successfully: ' || array_to_string(osw_tools, ', ');
+END;
+$$
+LANGUAGE plpgsql;
+GRANT EXECUTE ON FUNCTION api.delete_tools(char[]) TO api_anon;
+GRANT EXECUTE ON FUNCTION api.delete_tools(char[]) TO api_user;
+ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON FUNCTIONS TO PUBLIC;
+
 -- Create tools_view for public access
 DROP VIEW IF EXISTS api.tools_view;
 CREATE OR REPLACE VIEW api.tools_view AS
@@ -79,7 +128,6 @@ SELECT * FROM api.tools;
 GRANT SELECT ON api.tools_view TO api_anon;
 -- GRANT ALL ON api.tools_view TO api_user;
 GRANT SELECT ON api.tools_view TO api_user;
-
 
 
 -- Create synthetic data for query testing
