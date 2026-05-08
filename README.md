@@ -1,5 +1,7 @@
 # TimescaleDB PostgREST <!-- omit in toc -->
 
+ARCHIVE: Further Development moved to [https://github.com/opensemanticworld/pgstack](https://github.com/opensemanticworld/pgstack)
+
 ## Table of Contents <!-- omit in toc -->
 
 - [Database Schema](#database-schema)
